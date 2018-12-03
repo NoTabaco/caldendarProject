@@ -57,5 +57,9 @@ public class CalendarPanel extends JPanel {
 		revalidate();
 		repaint();
 	}
+	
+	public void removePanel() {
+		remove(diaryPanel);
+	}
 
 }

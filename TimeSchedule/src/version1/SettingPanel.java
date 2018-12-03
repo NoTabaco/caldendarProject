@@ -69,7 +69,6 @@ public class SettingPanel extends JDialog {
 
 	public void visible(boolean isView) {
 		setVisible(isView);
-		System.out.println(holibox.getFont());
 	}
 	
 	class CheckEvent implements ItemListener{

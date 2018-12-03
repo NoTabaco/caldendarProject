@@ -25,6 +25,7 @@ public class MainFrame extends JFrame {
 	static JPanel mainPanel;
 	static TaskPanel taskPanel;
 	static SettingPanel settingPanel;
+	static ScheduleInfoPanel scheduleInfoPanel;
 	
 	static Font moonFont;
 	static Font basicFont;
@@ -48,8 +49,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		taskPanel = new TaskPanel(this,true);
 		settingPanel = new SettingPanel(this,true);
-		
-		connection = MainFrame.connection;
+		scheduleInfoPanel = new ScheduleInfoPanel(this,true);
 		// 데이터 베이스 연결
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");

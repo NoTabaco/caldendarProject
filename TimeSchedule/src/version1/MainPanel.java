@@ -41,6 +41,7 @@ public class MainPanel extends JPanel {
 	JTextField textField;
 	Font font;
 
+	Calendar cal;
 	
 	Connection connection = null;
 	Statement st = null;
@@ -49,6 +50,10 @@ public class MainPanel extends JPanel {
 	 * Create the panel.
 	 */
 	public MainPanel() {
+		cal = Calendar.getInstance();
+		setYear = cal.get(cal.YEAR);
+		setMonth = cal.get(cal.MONTH) + 1;
+		setDay = cal.get(cal.DATE);
 		// 메뉴패널 할당
 		MenuPanel = new MenuPanel();
 		// 배경사진 로딩
@@ -63,14 +68,14 @@ public class MainPanel extends JPanel {
 		layout = (BorderLayout) getLayout();
 		// North에 컴포넌트 추가할 Date패널 생성
 		datePanel = new DatePanel();
+		// calendarPanel을 CENTER에 추가
+		calendarPanel = new CalendarPanel(setYear, setMonth - 1);
 		// datePanel을 BorderLayout NORTH에 추가
 		add(datePanel, BorderLayout.NORTH);
 		// add(textField, BorderLayout.SOUTH);
 		add(MenuPanel, BorderLayout.SOUTH);
+		add(calendarPanel, BorderLayout.CENTER);
 
-		// calendarPanel을 CENTER에 추가
-		calendarPanel = new CalendarPanel(setYear, setMonth - 1);
-		addCenter(calendarPanel);
 
 	}
 
@@ -78,22 +83,19 @@ public class MainPanel extends JPanel {
 		remove(layout.getLayoutComponent(BorderLayout.CENTER));
 	}
 
-	public void addCenter(JPanel panel) {
-		this.add(panel, BorderLayout.CENTER);
-		repaint();
-	}
-
 	public void rePaint() {
 		remove(datePanel);
 		remove(MenuPanel);
 		remove(calendarPanel);
-
+		
 		MenuPanel = new MenuPanel();
 		datePanel = new DatePanel();
 		calendarPanel = new CalendarPanel(setYear, setMonth - 1);
+		
 		add(datePanel, BorderLayout.NORTH);
 		add(MenuPanel, BorderLayout.SOUTH);
 		add(calendarPanel, BorderLayout.CENTER);
+		calendarPanel.updateUI();
 		revalidate();
 		repaint();
 	}
@@ -121,11 +123,6 @@ public class MainPanel extends JPanel {
 		Font font;
 		JLabel date;
 		Calendar cal;
-
-		// 현재 년도, 월, 일
-		int currentYear;
-		int currentMonth;
-		int currentDay;
 
 		/**
 		 * Create the panel.
@@ -162,19 +159,16 @@ public class MainPanel extends JPanel {
 				// 버튼을 클릭했을때 이벤트 처리
 				@Override
 				public void mousePressed(MouseEvent e) {
-					currentMonth--;
-					if (currentMonth <= 0) {
-						currentYear--;
-						currentMonth = 12;
+					setMonth--;
+					if (setMonth <= 0) {
+						setYear--;
+						setMonth = 12;
 					}
-					date.setText(currentYear + "년" + currentMonth + "월");
-					CalendarPanel calendarPanel = new CalendarPanel(currentYear, currentMonth - 1);
-					removeCenter();
-					addCenter(calendarPanel);
-					MainPanel.setYear = currentYear;
-					MainPanel.setMonth = currentMonth;
+					date.setText(setYear + "년" + setMonth + "월");
+					rePaint();
 				}
 			});
+			
 			right.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseEntered(MouseEvent e) {
@@ -197,17 +191,13 @@ public class MainPanel extends JPanel {
 				// 버튼을 클릭했을때 이벤트 처리
 				@Override
 				public void mousePressed(MouseEvent e) {
-					currentMonth++;
-					if (currentMonth > 12) {
-						currentYear++;
-						currentMonth = 1;
+					setMonth++;
+					if (setMonth > 12) {
+						setYear++;
+						setMonth = 1;
 					}
-					date.setText(currentYear + "년" + currentMonth + "월");
-					calendarPanel = new CalendarPanel(currentYear, currentMonth - 1);
-					removeCenter();
-					addCenter(calendarPanel);
-					MainPanel.setYear = currentYear;
-					MainPanel.setMonth = currentMonth;
+					date.setText(setYear + "년" + setMonth + "월");
+					rePaint();
 				}
 			});
 			// 레이아웃 설정
@@ -216,16 +206,9 @@ public class MainPanel extends JPanel {
 			// 달력 생성
 			cal = Calendar.getInstance();
 
-			// 현재 년도, 월, 일
-			currentYear = cal.get(cal.YEAR);
-			currentMonth = cal.get(cal.MONTH) + 1;
-			currentDay = cal.get(cal.DATE);
-
-			MainPanel.setYear = currentYear;
-			MainPanel.setMonth = currentMonth;
 
 			// 날짜를 표현할 JLabel 선언
-			date = new JLabel(currentYear + "년 " + currentMonth + "월");
+			date = new JLabel(setYear + "년 " + setMonth + "월");
 			// 글자색 지정
 			date.setForeground(Color.RED);
 			// 폰트 지정

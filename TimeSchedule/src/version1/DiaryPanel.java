@@ -69,6 +69,7 @@ public class DiaryPanel extends JPanel{
 				ResultSet rs = st.executeQuery(sql);
 				while (rs.next()) {
 					moon[0][i] = rs.getString("lunar_date").substring(5);
+					if(MainFrame.isHoliday)
 					memo = rs.getString("memo");
 					
 				}
@@ -82,17 +83,18 @@ public class DiaryPanel extends JPanel{
 				} 
 				
 				if(memo.length() != 0) {
-					schedule[0][i].insertTodo(memo);
+					schedule[0][i].insertTodo(memo,true);
+					schedule[0][i].updateTodo();
 				}
 				
 				sql = "select memo FROM schedule WHERE solar ='" + solaDate +"';";
 				st = connection.createStatement();
 				rs = st.executeQuery(sql);
 				while (rs.next()) {
-					schedule[0][i].insertTodo(rs.getString("memo"));
+					schedule[0][i].insertTodo(rs.getString("memo"),false);
 					schedule[0][i].updateTodo();
 				}
-				
+				schedule[0][i].setIsPrevious(true);
 			}
 			// 첫번째 줄에서 현재달 날짜를 출력
 			int day = 1;
@@ -107,6 +109,7 @@ public class DiaryPanel extends JPanel{
 				ResultSet rs = st.executeQuery(sql);
 				while (rs.next()) {
 					moon[0][i] = rs.getString("lunar_date").substring(5);
+					if(MainFrame.isHoliday)
 					memo = rs.getString("memo");
 				}
 				schedule[0][i] = new Schedule(solar[0][i], moon[0][i]);
@@ -119,14 +122,15 @@ public class DiaryPanel extends JPanel{
 				}
 				
 				if(memo.length() != 0) {
-					schedule[0][i].insertTodo(memo); 
+					schedule[0][i].insertTodo(memo,true); 
+					schedule[0][i].updateTodo();
 				}
 				
 				sql = "select memo FROM schedule WHERE solar ='" + solaDate +"';";
 				st = connection.createStatement();
 				rs = st.executeQuery(sql);
 				while (rs.next()) {
-					schedule[0][i].insertTodo(rs.getString("memo"));
+					schedule[0][i].insertTodo(rs.getString("memo"),false);
 					schedule[0][i].updateTodo();
 				}
 			}
@@ -153,6 +157,7 @@ public class DiaryPanel extends JPanel{
 					ResultSet rs = st.executeQuery(sql);
 					while (rs.next()) {
 						moon[i][j] = rs.getString("lunar_date").substring(5);
+						if(MainFrame.isHoliday)
 						memo = rs.getString("memo");
 					}
 					schedule[i][j] = new Schedule(solar[i][j], moon[i][j]);
@@ -165,6 +170,7 @@ public class DiaryPanel extends JPanel{
 						} else {
 							schedule[i][j].setSolarColor(new Color(0, 0, 0,100));
 						}
+						schedule[i][j].setIsNext(true);
 					} else {
 						if(getDateDay(solaDate) == 1 || memo.length() != 0) {
 							schedule[i][j].setSolarColor(new Color(255, 0, 0));
@@ -174,19 +180,16 @@ public class DiaryPanel extends JPanel{
 							schedule[i][j].setSolarColor(new Color(0, 0, 0));
 						}
 					}
-					
-					System.out.println("length= " + memo.length() + "," + memo);
 					if(memo.length() != 0) {
-						System.out.println("solaDate = " + solaDate);
-						System.out.println("schedul[i][j].insertTodo(memo); = " + memo);
-						schedule[i][j].insertTodo(memo);
+						schedule[i][j].insertTodo(memo,true);
+						schedule[i][j].updateTodo();
 					}
 					
 					sql = "select memo FROM schedule WHERE solar ='" + solaDate +"';";
 					st = connection.createStatement();
 					rs = st.executeQuery(sql);
 					while (rs.next()) {
-						schedule[i][j].insertTodo(rs.getString("memo"));
+						schedule[i][j].insertTodo(rs.getString("memo"),false);
 						schedule[i][j].updateTodo();
 					}
 				}
