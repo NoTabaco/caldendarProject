@@ -11,15 +11,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Calendar;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 public class MainPanel extends JPanel {
 	static int setYear;
@@ -27,26 +29,31 @@ public class MainPanel extends JPanel {
 	static int setDay;
 
 	CalendarPanel calendarPanel;
+	JPanel MenuPanel;
 	JPanel datePanel;
 	JPanel plusPanel;
+
+	
 	ImageIcon backGroundImageIcons[] = new ImageIcon[12];
 	Image backGroundImages[] = new Image[12];
 	BorderLayout layout;
-	
+
 	JTextField textField;
 	Font font;
+
 	
 	Connection connection = null;
 	Statement st = null;
-
 
 	/**
 	 * Create the panel.
 	 */
 	public MainPanel() {
+		// 메뉴패널 할당
+		MenuPanel = new MenuPanel();
 		// 배경사진 로딩
-		for(int i = 0 ; i < 12 ; i++) {
-			backGroundImageIcons[i] = new ImageIcon("images/" + (i+1)+ ".png");
+		for (int i = 0; i < 12; i++) {
+			backGroundImageIcons[i] = new ImageIcon("images/" + (i + 1) + ".png");
 			backGroundImages[i] = backGroundImageIcons[i].getImage();
 		}
 		// 폰트 설정
@@ -65,27 +72,28 @@ public class MainPanel extends JPanel {
 				String solaDate = Integer.toString(setYear) + "-" + setMonth + "-" + setDay;
 				String memo = textField.getText();
 				String sql;
-				sql = "INSERT INTO `schedule`(`solar`,`memo`) VALUES('"+ solaDate +"','" + memo +  "');";
+				sql = "INSERT INTO `schedule`(`solar`,`memo`) VALUES('" + solaDate + "','" + memo + "');";
 				try {
-					
+
 					st = connection.createStatement();
-				st.executeUpdate(sql);
-				} catch(Exception err) {
+					st.executeUpdate(sql);
+				} catch (Exception err) {
 					err.printStackTrace();
 				}
 				textField.setText("");
 				calendarPanel.updatePanel();
 			}
-			
+
 		});
 		// datePanel을 BorderLayout NORTH에 추가
 		add(datePanel, BorderLayout.NORTH);
-		add(textField, BorderLayout.SOUTH);
+		// add(textField, BorderLayout.SOUTH);
+		add(MenuPanel, BorderLayout.SOUTH);
 
 		// calendarPanel을 CENTER에 추가
 		calendarPanel = new CalendarPanel(setYear, setMonth - 1);
 		addCenter(calendarPanel);
-		
+
 	}
 
 	public void removeCenter() {
@@ -104,7 +112,7 @@ public class MainPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(backGroundImages[setMonth-1], 0, 0, getWidth(), getHeight(), this);
+		g.drawImage(backGroundImages[setMonth - 1], 0, 0, getWidth(), getHeight(), this);
 	}
 
 	/*
@@ -241,7 +249,6 @@ public class MainPanel extends JPanel {
 			add(left, BorderLayout.WEST);
 			add(right, BorderLayout.EAST);
 
-
 		}
 
 		public void setButtonUI(JButton button) {
@@ -253,19 +260,119 @@ public class MainPanel extends JPanel {
 			button.setFocusPainted(false);
 		}
 	}
-	
+
 	class MenuPanel extends JPanel {
-		ImageIcon plusButtonImage = new ImageIcon("images/plusButton");
+		ImageIcon plusButtonImage = new ImageIcon("images/plusButton.png");
+		ImageIcon plusButtonEnterImage = new ImageIcon("images/plusEnterButton.png");
+		ImageIcon taskButtonImage = new ImageIcon("images/taskButton.png");
+		ImageIcon taskButtonEnterImage = new ImageIcon("images/taskEnterButton.png");
+		ImageIcon settingButtonImage = new ImageIcon("images/settingButton.png");
+		ImageIcon settingButtonEnterImage = new ImageIcon("images/settingEnterButton.png");
 		JButton plusButton;
+		JButton taskButton;
+		JButton settingButton;
+
 		public MenuPanel() {
+			plusButton = new JButton(plusButtonImage);
+			taskButton = new JButton(taskButtonImage);
+			settingButton = new JButton(settingButtonImage);
+			plusButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					plusButton.setIcon(plusButtonEnterImage);
+					plusButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+
+				// 마우스가 버튼에 나갔을때 이벤트 처리
+				@Override
+				public void mouseExited(MouseEvent e) {
+					plusButton.setIcon(plusButtonImage);
+					plusButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				}
+
+				// 버튼을 클릭했을때 이벤트 처리
+				@Override
+				public void mousePressed(MouseEvent e) {
+					UIManager.put("OptionPane.messageFont", MainFrame.basicFont);
+					String solaDate = Integer.toString(setYear) + "-" + setMonth + "-" + setDay;
+					String memo = JOptionPane.showInputDialog(null, (setYear +"년" + setMonth+  "월" + setDay + "일" + "\n일정을 입력하세요"), "일정을 입력하세요", JOptionPane.OK_CANCEL_OPTION);
+					String sql;
+					if(memo != null) {
+					sql = "INSERT INTO `schedule`(`solar`,`memo`) VALUES('" + solaDate + "','" + memo + "');";
+					try {
+						st = connection.createStatement();
+						st.executeUpdate(sql);
+					} catch (Exception err) {
+						err.printStackTrace();
+					}
+					calendarPanel.updatePanel();
+					}
+				}
+			});
 			
+			taskButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					taskButton.setIcon(taskButtonEnterImage);
+					taskButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+
+				// 마우스가 버튼에 나갔을때 이벤트 처리
+				@Override
+				public void mouseExited(MouseEvent e) {
+					taskButton.setIcon(taskButtonImage);
+					taskButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				}
+
+				// 버튼을 클릭했을때 이벤트 처리
+				@Override
+				public void mousePressed(MouseEvent e) {
+					MainFrame.taskPanel.updatePanel();
+					MainFrame.taskPanel.visible(true);
+				}
+			});
+			
+			settingButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					settingButton.setIcon(settingButtonEnterImage);
+					settingButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+
+				// 마우스가 버튼에 나갔을때 이벤트 처리
+				@Override
+				public void mouseExited(MouseEvent e) {
+					settingButton.setIcon(settingButtonImage);
+					settingButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				}
+
+				// 버튼을 클릭했을때 이벤트 처리
+				@Override
+				public void mousePressed(MouseEvent e) {
+					
+				}
+			});
+
+			setButtonUI(plusButton);
+			setButtonUI(taskButton);
+			setButtonUI(settingButton);
+
+			setLayout(new BorderLayout());
+			setOpaque(false);
+			add(plusButton, BorderLayout.CENTER);
+			add(taskButton, BorderLayout.WEST);
+			add(settingButton, BorderLayout.EAST);
+		}
+
+		public void setButtonUI(JButton button) {
+			// 외곽선 제거
+			button.setBorderPainted(false);
+			// 내용 체우기 제거
+			button.setContentAreaFilled(false);
+			// 포커스 되었을시 테두리 제거
+			button.setFocusPainted(false);
 		}
 	}
-	
-	class TaskPanel extends JPanel{
-		public TaskPanel() {
-			
-		}
-	}
-	
+
+
 }

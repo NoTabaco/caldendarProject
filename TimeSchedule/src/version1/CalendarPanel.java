@@ -56,7 +56,6 @@ public class CalendarPanel extends JPanel {
 		add(diaryPanel, BorderLayout.CENTER);
 		revalidate();
 		repaint();
-
 	}
 
 }

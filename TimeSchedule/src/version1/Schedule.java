@@ -3,14 +3,16 @@ package version1;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 /**
  * 스케쥴 하나하나를  표시하는 패널
@@ -74,17 +76,23 @@ public class Schedule extends JPanel{
 	}
 	
 	public void updateTodo() {
+		JPanel todoListPanel = new JPanel();
+		todoListPanel.setLayout(new GridLayout(0,1));
+		todoListPanel.setOpaque(false);
+		String todos = "";
 		if(layout.getLayoutComponent(BorderLayout.CENTER) != null) {
 		remove(layout.getLayoutComponent(BorderLayout.CENTER));
 		}
-		JLabel todo[] = new JLabel[todoList.size()];
-		for (int i = 0 ; i < todo.length ; i++) {
-			todo[i] = new JLabel(todoList.get(i));
-			todo[i].setFont(moonFont);
-			todo[i].setHorizontalAlignment(JLabel.CENTER);
-			todo[i].setForeground(Color.PINK);
-			add(todo[i], BorderLayout.CENTER);
+		JLabel todo;
+		for (int i = 0 ; i < todoList.size() ; i++) {
+			todo = new JLabel(todoList.get(i));
+			todo.setHorizontalAlignment(JLabel.CENTER);
+			todo.setForeground(new Color(78,223,206));
+			todo.setFont(moonFont);
+			todoListPanel.add(todo);
 		}
+		System.out.println(todos);
+		add(todoListPanel, BorderLayout.CENTER);
 	}
 	public void insertTodo(String todo) {
 		todoList.add(todo);
@@ -130,10 +138,19 @@ public class Schedule extends JPanel{
 	
 	class MouseEvent extends MouseAdapter{
 
+
 		@Override
 		public void mouseClicked(java.awt.event.MouseEvent e) {
 			MainPanel.setDay = solar;
 			getFocus();
+			if(e.getClickCount()%2 == 0) {
+				UIManager.put("OptionPane.messageFont", MainFrame.basicFont);
+				String todos = MainPanel.setYear + "년" + MainPanel.setMonth + "월" + MainPanel.setDay + "일 일정\n";
+				for (int i = 0 ; i < todoList.size() ; i++) {
+					todos = todos +"  - " + todoList.get(i) +"\n";
+				}
+				JOptionPane.showMessageDialog(null, todos);
+			}
 		}
 	}
 }

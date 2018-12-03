@@ -23,9 +23,13 @@ public class MainFrame extends JFrame {
 	int mouseX;
 	int mouseY;
 	static JPanel mainPanel;
+	static TaskPanel taskPanel;
+	
 	static Font moonFont;
 	static Font basicFont;
+	static Font smallFont;
 
+	
 	static Connection connection = null;
 	static Statement st = null;
 
@@ -39,6 +43,7 @@ public class MainFrame extends JFrame {
 
 	// create Frame
 	public MainFrame() {
+		taskPanel = new TaskPanel(this,true);
 		connection = MainFrame.connection;
 		// 데이터 베이스 연결
 		try {
@@ -63,6 +68,13 @@ public class MainFrame extends JFrame {
 				System.out.println("Error");
 			}
 		
+		try {
+			smallFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(new File("font/Maplestory_Bold.ttf"))).deriveFont(Font.BOLD, 20);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Error");
+			}
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// 화면 크기를 임의로 변경하지 못하게 설정
 		setResizable(false);		
@@ -76,6 +88,7 @@ public class MainFrame extends JFrame {
 		setLayout(new BorderLayout());
 		// 배경화면 색 선정
 		setBackground(Color.WHITE);
+		setLocationRelativeTo(null);
 		
 		JPanel menubar = new MenubarPanel();
 		menubar.addMouseListener(new MouseAdapter() {
