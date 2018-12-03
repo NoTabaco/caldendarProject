@@ -24,11 +24,14 @@ public class MainFrame extends JFrame {
 	int mouseY;
 	static JPanel mainPanel;
 	static TaskPanel taskPanel;
+	static SettingPanel settingPanel;
 	
 	static Font moonFont;
 	static Font basicFont;
-	static Font smallFont;
-
+	
+	static boolean isBackground = true;
+	static boolean isMoon = true;
+	static boolean isHoliday = true;
 	
 	static Connection connection = null;
 	static Statement st = null;
@@ -44,6 +47,8 @@ public class MainFrame extends JFrame {
 	// create Frame
 	public MainFrame() {
 		taskPanel = new TaskPanel(this,true);
+		settingPanel = new SettingPanel(this,true);
+		
 		connection = MainFrame.connection;
 		// 데이터 베이스 연결
 		try {
@@ -68,20 +73,14 @@ public class MainFrame extends JFrame {
 				System.out.println("Error");
 			}
 		
-		try {
-			smallFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(new File("font/Maplestory_Bold.ttf"))).deriveFont(Font.BOLD, 20);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("Error");
-			}
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// 화면 크기를 임의로 변경하지 못하게 설정
-		setResizable(false);		
+		setResizable(true);		
 		// 배경화면을 검정으로 설정해준다.
 		setBackground(Color.BLACK);
 		// 화면 크기 지정
-		setSize(450,800);
+		setSize(600,800);
 		// 메뉴바가 보이지 않게끔 설정
 		setUndecorated(true);
 		// 레이아웃 설정

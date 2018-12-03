@@ -54,7 +54,9 @@ public class Schedule extends JPanel{
 		moonDate.setFont(moonFont);
 		// 레이블 레이아웃에 추가
 		add(solarDate,BorderLayout.NORTH);
+		if(MainFrame.isMoon) {
 		add(moonDate,BorderLayout.SOUTH);
+		}
 		// 양력 기본색 지정
 		solarColor = new Color(0,0,0);
 		// 양력 기본색설정
@@ -79,22 +81,23 @@ public class Schedule extends JPanel{
 		JPanel todoListPanel = new JPanel();
 		todoListPanel.setLayout(new GridLayout(0,1));
 		todoListPanel.setOpaque(false);
-		String todos = "";
 		if(layout.getLayoutComponent(BorderLayout.CENTER) != null) {
 		remove(layout.getLayoutComponent(BorderLayout.CENTER));
 		}
 		JLabel todo;
 		for (int i = 0 ; i < todoList.size() ; i++) {
+			System.out.println("todo = new JLabel(todoList.get(i)); = "+ i + ", " + todoList.get(i) );
 			todo = new JLabel(todoList.get(i));
 			todo.setHorizontalAlignment(JLabel.CENTER);
-			todo.setForeground(new Color(78,223,206));
+			todo.setForeground(new Color(38,38,38));
 			todo.setFont(moonFont);
+			System.out.println(todo.getText());
 			todoListPanel.add(todo);
 		}
-		System.out.println(todos);
 		add(todoListPanel, BorderLayout.CENTER);
 	}
 	public void insertTodo(String todo) {
+		System.out.println("insertTodo =" + todo);
 		todoList.add(todo);
 	}
 	

@@ -73,7 +73,7 @@ public class TaskPanel extends JDialog {
 		previousDay = cal.get(cal.DATE);
 
 		setLayout(new BorderLayout());
-		setTitle("프로젝트 관리 프레임");
+		setTitle("프로젝트 관리");
 		setSize(1000, 600);
 		setVisible(false);
 		setLocationRelativeTo(null);
@@ -199,7 +199,7 @@ public class TaskPanel extends JDialog {
 	}
 
 	public void setButtonUI(JButton button) {
-		button.setFont(MainFrame.smallFont);
+		button.setFont(MainFrame.basicFont);
 		// 외곽선 제거
 		button.setBorderPainted(false);
 		// 내용 체우기 제거

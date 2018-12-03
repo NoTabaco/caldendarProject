@@ -63,28 +63,6 @@ public class MainPanel extends JPanel {
 		layout = (BorderLayout) getLayout();
 		// North에 컴포넌트 추가할 Date패널 생성
 		datePanel = new DatePanel();
-		textField = new JTextField(10);
-		textField.setFont(font);
-		textField.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String solaDate = Integer.toString(setYear) + "-" + setMonth + "-" + setDay;
-				String memo = textField.getText();
-				String sql;
-				sql = "INSERT INTO `schedule`(`solar`,`memo`) VALUES('" + solaDate + "','" + memo + "');";
-				try {
-
-					st = connection.createStatement();
-					st.executeUpdate(sql);
-				} catch (Exception err) {
-					err.printStackTrace();
-				}
-				textField.setText("");
-				calendarPanel.updatePanel();
-			}
-
-		});
 		// datePanel을 BorderLayout NORTH에 추가
 		add(datePanel, BorderLayout.NORTH);
 		// add(textField, BorderLayout.SOUTH);
@@ -106,12 +84,24 @@ public class MainPanel extends JPanel {
 	}
 
 	public void rePaint() {
+		remove(datePanel);
+		remove(MenuPanel);
+		remove(calendarPanel);
+
+		MenuPanel = new MenuPanel();
+		datePanel = new DatePanel();
+		calendarPanel = new CalendarPanel(setYear, setMonth - 1);
+		add(datePanel, BorderLayout.NORTH);
+		add(MenuPanel, BorderLayout.SOUTH);
+		add(calendarPanel, BorderLayout.CENTER);
+		revalidate();
 		repaint();
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		if(MainFrame.isBackground)
 		g.drawImage(backGroundImages[setMonth - 1], 0, 0, getWidth(), getHeight(), this);
 	}
 
@@ -349,7 +339,9 @@ public class MainPanel extends JPanel {
 				// 버튼을 클릭했을때 이벤트 처리
 				@Override
 				public void mousePressed(MouseEvent e) {
-					
+					MainFrame.settingPanel.updatePanel();
+					MainFrame.settingPanel.visible(true);
+					rePaint();
 				}
 			});
 

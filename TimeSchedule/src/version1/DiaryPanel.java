@@ -59,22 +59,32 @@ public class DiaryPanel extends JPanel{
 			// 첫번쨰 줄에서 현재 달 이전 날짜 출력
 			for (int i = startOfMonthWeek - 1; i >= 0; i--) {
 				String sql;
+				// connection에서 statement를 가져온다.
 				st = connection.createStatement();
+				// 양력 날짜 형식 기재
 				String solaDate = Integer.toString(currentYear) + "-" + currentMonth + "-" + preDaysOfMonth;
+				String memo = "";
 				solar[0][i] = preDaysOfMonth--;
-				sql = "select lunar_date FROM g4_lunartosolar WHERE solar_date ='" + solaDate + "';";
+				sql = "select * FROM g4_lunartosolar WHERE solar_date ='" + solaDate + "';";
 				ResultSet rs = st.executeQuery(sql);
 				while (rs.next()) {
 					moon[0][i] = rs.getString("lunar_date").substring(5);
+					memo = rs.getString("memo");
+					
 				}
 				schedule[0][i] = new Schedule(solar[0][i], moon[0][i]);
-				if(getDateDay(solaDate) == 1) {
+				if(getDateDay(solaDate) == 1 || memo.length() != 0) {
 					schedule[0][i].setSolarColor(new Color(255, 0, 0, 100));
 				} else if(getDateDay(solaDate) == 7){
 					schedule[0][i].setSolarColor(new Color(0, 0, 255, 100));	
 				} else {
 					schedule[0][i].setSolarColor(new Color(0, 0, 0, 100));
+				} 
+				
+				if(memo.length() != 0) {
+					schedule[0][i].insertTodo(memo);
 				}
+				
 				sql = "select memo FROM schedule WHERE solar ='" + solaDate +"';";
 				st = connection.createStatement();
 				rs = st.executeQuery(sql);
@@ -82,6 +92,7 @@ public class DiaryPanel extends JPanel{
 					schedule[0][i].insertTodo(rs.getString("memo"));
 					schedule[0][i].updateTodo();
 				}
+				
 			}
 			// 첫번째 줄에서 현재달 날짜를 출력
 			int day = 1;
@@ -90,19 +101,25 @@ public class DiaryPanel extends JPanel{
 				st = connection.createStatement();
 				String solaDate = Integer.toString(currentYear) + "-" + (currentMonth + 1) + "-"
 						+ (day < 10 ? "0" + day : day);
+				String memo = "";
 				solar[0][i] = day++;
-				sql = "select lunar_date FROM g4_lunartosolar WHERE solar_date ='" + solaDate + "';";
+				sql = "select * FROM g4_lunartosolar WHERE solar_date ='" + solaDate + "';";
 				ResultSet rs = st.executeQuery(sql);
 				while (rs.next()) {
 					moon[0][i] = rs.getString("lunar_date").substring(5);
+					memo = rs.getString("memo");
 				}
 				schedule[0][i] = new Schedule(solar[0][i], moon[0][i]);
-				if(getDateDay(solaDate) == 1) {
+				if(getDateDay(solaDate) == 1 || memo.length() != 0) {
 					schedule[0][i].setSolarColor(new Color(255, 0, 0));
 				} else if(getDateDay(solaDate) == 7){
 					schedule[0][i].setSolarColor(new Color(0, 0, 255));	
 				} else {
 					schedule[0][i].setSolarColor(new Color(0, 0, 0));
+				}
+				
+				if(memo.length() != 0) {
+					schedule[0][i].insertTodo(memo); 
 				}
 				
 				sql = "select memo FROM schedule WHERE solar ='" + solaDate +"';";
@@ -130,15 +147,18 @@ public class DiaryPanel extends JPanel{
 					st = connection.createStatement();
 					String solaDate = Integer.toString(currentYear) + "-" + (currentMonth + 1) + "-"
 							+ (day < 10 ? "0" + day : day);
+					String memo = "";
 					solar[i][j] = day++;
-					sql = "select lunar_date FROM g4_lunartosolar WHERE solar_date ='" + solaDate + "';";
+					sql = "select * FROM g4_lunartosolar WHERE solar_date ='" + solaDate + "';";
 					ResultSet rs = st.executeQuery(sql);
 					while (rs.next()) {
 						moon[i][j] = rs.getString("lunar_date").substring(5);
+						memo = rs.getString("memo");
 					}
 					schedule[i][j] = new Schedule(solar[i][j], moon[i][j]);
+
 					if (isNext) {
-						if(getDateDay(solaDate) == 1) {
+						if(getDateDay(solaDate) == 1 || memo.length() != 0) {
 							schedule[i][j].setSolarColor(new Color(255, 0, 0,100));
 						} else if(getDateDay(solaDate) == 7){
 							schedule[i][j].setSolarColor(new Color(0, 0, 255,100));	
@@ -146,7 +166,7 @@ public class DiaryPanel extends JPanel{
 							schedule[i][j].setSolarColor(new Color(0, 0, 0,100));
 						}
 					} else {
-						if(getDateDay(solaDate) == 1) {
+						if(getDateDay(solaDate) == 1 || memo.length() != 0) {
 							schedule[i][j].setSolarColor(new Color(255, 0, 0));
 						} else if(getDateDay(solaDate) == 7){
 							schedule[i][j].setSolarColor(new Color(0, 0, 255));	
@@ -154,6 +174,14 @@ public class DiaryPanel extends JPanel{
 							schedule[i][j].setSolarColor(new Color(0, 0, 0));
 						}
 					}
+					
+					System.out.println("length= " + memo.length() + "," + memo);
+					if(memo.length() != 0) {
+						System.out.println("solaDate = " + solaDate);
+						System.out.println("schedul[i][j].insertTodo(memo); = " + memo);
+						schedule[i][j].insertTodo(memo);
+					}
+					
 					sql = "select memo FROM schedule WHERE solar ='" + solaDate +"';";
 					st = connection.createStatement();
 					rs = st.executeQuery(sql);
