@@ -83,13 +83,14 @@ public class ScheduleInfoPanel extends JDialog {
 			// 버튼을 클릭했을때 이벤트 처리
 			@Override
 			public void mousePressed(MouseEvent e) {
-				String solarDate = year + "-" + month +  "-" + day + "-";
+				String solarDate = MainPanel.setYear + "-" + MainPanel.setMonth +  "-" + MainPanel.setDay;
 				for(int i = checkbox.length - 1 ; i >= 0 ; i--) {
 					if(checkbox[i].isSelected()) {
 						try {
 						String sql = "DELETE FROM schedule WHERE solar='" + solarDate + "' AND memo='" + todoList.get(i) + "';";
 						st = connection.createStatement();
 						st.executeUpdate(sql);
+						System.out.println(sql);
 						todoList.remove(i);
 						isVisible(false);
 						} catch(Exception err) {

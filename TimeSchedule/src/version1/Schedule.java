@@ -182,6 +182,7 @@ public class Schedule extends JPanel {
 				getFocus();
 				if (e.getClickCount() % 2 == 0) {
 					MainFrame.scheduleInfoPanel.setTodoList(todoList);
+					System.out.println(MainPanel.setYear+"," +MainPanel.setMonth + "," + MainPanel.setDay);
 					MainFrame.scheduleInfoPanel.drawGUI(MainPanel.setYear, MainPanel.setMonth, MainPanel.setDay);
 					MainFrame.scheduleInfoPanel.isVisible(true);
 					updateTodo();
